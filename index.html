@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매듭 Maedeup - 당신의 지적 의식</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. Variables & Reset --- */
+        :root {
+            --bg-color: #FDFCF8; /* 앱과 동일한 미색 배경 */
+            --text-main: #1C1C1E; /* 딥 차콜 */
+            --text-sub: #666666;
+            --accent: #2C3E50;
+            --line-color: #E0E0E0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* 기본 커서 숨김 (커스텀 커서 사용) */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- 2. Typography --- */
+        h1, h2, h3, .serif {
+            font-family: 'Noto Serif KR', serif;
+            font-weight: 700;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 3. Custom Cursor (The Knot) --- */
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background-color: var(--text-main);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference; /* 글자 위에서 색 반전 */
+        }
+
+        .cursor.hovered {
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: 1px solid #fff;
+        }
+
+        /* --- 4. The Central Thread (Scroll Line) --- */
+        .thread-line {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 0%;
+            background-color: var(--text-main);
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        /* --- 5. Layout Sections --- */
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+            color: #fff;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .menu-btn {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        #hero h1 {
+            font-size: 4.5rem;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -2px;
+        }
+
+        #hero p {
+            font-size: 1.2rem;
+            color: var(--text-sub);
+            font-weight: 300;
+            max-width: 600px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            animation: bounce 2s infinite;
+        }
+
+        /* Philosophy Section */
+        #philosophy {
+            padding: 10rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .content-box {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .quote {
+            font-size: 2rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            color: var(--accent);
+        }
+
+        /* Features (Cards) */
+        #features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: #fff;
+            padding: 3rem 2rem;
+            border: 1px solid var(--line-color);
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .card-num {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            line-height: 1.7;
+        }
+
+        /* Mockup / Download */
+        #download {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #1C1C1E;
+            color: #fff;
+            margin-top: 5rem;
+        }
+
+        #download h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-download {
+            padding: 1rem 3rem;
+            background: #fff;
+            color: #1C1C1E;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .btn-download:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            border-top: 1px solid var(--line-color);
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        @media (max-width: 768px) {
+            #hero h1 { font-size: 2.5rem; }
+            #features { grid-template-columns: 1fr; }
+            .cursor { display: none; } /* 모바일은 커서 숨김 */
+            * { cursor: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    
+    <div class="thread-line"></div>
+
+    <header>
+        <div class="logo serif hover-target">Maedeup</div>
+        <div class="menu-btn hover-target">App Download</div>
+    </header>
+
+    <section id="hero">
+        <h1 class="fade-in hover-target">
+            불안을 묶고,<br>
+            지식을 매듭짓다.
+        </h1>
+        <p class="fade-in" style="transition-delay: 0.2s;">
+            하루 한 번, 당신을 위한 가장 지적인 의식
+        </p>
+        <div class="scroll-indicator fade-in" style="transition-delay: 0.4s;">
+            SCROLL TO UNTIE
+        </div>
+    </section>
+
+    <section id="philosophy">
+        <div class="content-box">
+            <p class="quote serif fade-in hover-target">
+                "정보는 넘쳐나지만<br>
+                나의 것은 없습니다."
+            </p>
+            <p class="fade-in" style="transition-delay: 0.2s; font-weight: 300;">
+                매듭(Maedeup)은 흩어지는 뉴스 속에서<br>
+                당신이 꼭 알아야 할 본질만을 정제합니다.<br>
+                단순한 읽기를 넘어, 소유하는 감각을 선물합니다.
+            </p>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="feature-card fade-in hover-target">
+            <span class="card-num">CARD 01</span>
+            <h3 class="card-title">오늘의 매듭</h3>
+            <p class="card-desc">
+                가장 중요한 이슈 하나를 선정하여<br>
+                현상, 본질, 전망의 3단 구조로<br>
+                깊이 있게 풀어냅니다.
+            </p>
+        </div>
+        <div class="feature-card fade-in hover-target" style="transition-delay: 0.2s;">
+            <span class="card-num">CARD 02</span>
+            <h3 class="card-title">지식의 결</h3>
+            <p class="card-desc">
+                단순한 사실 전달을 넘어<br>
+                역사적 맥락과 인문학적 배경을<br>
+                도슨트처럼 설명해 드립니다.
+            </p>
+        </div>
+        <div class="feature-card fade-in hover-target" style="transition-delay: 0.4s;">
+            <span class="card-num">CARD 03</span>
+            <h3 class="card-title">문장의 여백</h3>
+            <p class="card-desc">
+                차가운 정보 끝에<br>
+                삶을 위로하는 따뜻한 에세이로<br>
+                생각할 틈을 드립니다.
+            </p>
+        </div>
+    </section>
+
+    <section id="download">
+        <h2 class="fade-in hover-target">이제, 매듭지을 시간입니다.</h2>
+        <a href="#" class="btn-download fade-in hover-target" style="transition-delay: 0.2s;">앱 다운로드 (Beta)</a>
+    </section>
+
+    <footer>
+        &copy; 2026 Maedeup. All rights reserved. <br>
+        Seoul, Republic of Korea.
+    </footer>
+
+    <script>
+        // --- 1. Custom Cursor Logic ---
+        const cursor = document.querySelector('.cursor');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- 2. Scroll Animations (Fade In) ---
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // --- 3. The Thread Line Animation ---
+        const threadLine = document.querySelector('.thread-line');
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            // 실이 스크롤에 따라 길어짐
+            threadLine.style.height = scrollPercent + '%';
+        });
+    </script>
+</body>
+</html>
